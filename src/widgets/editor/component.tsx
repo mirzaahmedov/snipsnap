@@ -4,10 +4,12 @@ import { useCallback, useMemo, useEffect, useState } from "react";
 import { Box } from "@radix-ui/themes";
 import CodeMirror, { Extension, lineNumbers } from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
-import { useEditorOptions } from "./shared/stores/options";
-import { MacosFrame } from "./components/frames";
+import { MacosFrame } from "@app/components/frames";
 import { languages } from "@codemirror/language-data";
 import { javascript } from "@codemirror/lang-javascript";
+import { useEditorOptions } from "@app/shared/stores/options";
+import { colorschemes } from "@app/features";
+import { isDataURL } from "@app/utils/base64";
 
 type EditorProps = {
   editorRef: RefObject<HTMLDivElement>;
@@ -17,13 +19,8 @@ type EditorProps = {
 const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
   const [langSupport, setLangSupport] = useState<Extension>(javascript());
 
-  const {
-    programmingLanguage: syntax,
-    colorscheme: theme,
-    fontSize,
-    fontFamily,
-    bgColor,
-  } = useEditorOptions();
+  const { programmingLanguage, colorscheme, fontSize, fontFamily, background } =
+    useEditorOptions();
 
   const onChange = useCallback(
     (value: string) => {
@@ -34,10 +31,15 @@ const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
 
   useEffect(() => {
     languages
-      .find((lang) => lang.name === syntax)
+      .find((lang) => lang.name === programmingLanguage)
       ?.load()
       .then(setLangSupport);
-  }, [syntax]);
+  }, [programmingLanguage]);
+
+  const theme = useMemo(() => {
+    return colorschemes.find((scheme) => scheme.name === colorscheme)
+      ?.colorscheme;
+  }, [colorscheme]);
 
   const extensions = useMemo(
     () => [
@@ -61,7 +63,7 @@ const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
       maxWidth="1000px"
       className="p-10"
       style={{
-        background: bgColor,
+        background: isDataURL(background) ? `url(${background})` : background,
       }}
     >
       <MacosFrame className="shadow-xl shadow-black/40 font-mono">

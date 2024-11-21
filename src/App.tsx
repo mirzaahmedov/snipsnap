@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Flex } from "@radix-ui/themes";
-import { Editor } from "./editor";
-import { Sidebar } from "./sidebar";
+import { Sidebar, Editor } from "@app/widgets";
 import { defaultContent } from "./data";
 
 const App = () => {

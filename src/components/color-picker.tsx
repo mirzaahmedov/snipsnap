@@ -1,9 +1,10 @@
 import type { ComponentProps } from "react";
 
 import { Box, Button, Popover } from "@radix-ui/themes";
-import GradientPicker from "react-gcolor-picker";
+import GColorPicker from "react-gcolor-picker";
 
-const ColorPicker = (props: ComponentProps<typeof GradientPicker>) => {
+type ColorPickerProps = ComponentProps<typeof GColorPicker>;
+const ColorPicker = (props: ColorPickerProps) => {
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -14,15 +15,18 @@ const ColorPicker = (props: ComponentProps<typeof GradientPicker>) => {
           <Box
             className="size-6 rounded"
             style={{ background: props.value }}
-          ></Box>
-          {props.value}
+          />
         </Button>
       </Popover.Trigger>
       <Popover.Content className="p-0 overflow-visible">
-        <GradientPicker {...props} />
+        <GColorPicker
+          gradient
+          {...props}
+        />
       </Popover.Content>
     </Popover.Root>
   );
 };
 
 export { ColorPicker };
+export type { ColorPickerProps };
