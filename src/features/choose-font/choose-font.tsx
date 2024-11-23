@@ -11,7 +11,7 @@ const ChooseFont = ({ selected, onChange }: ChooseFontProps) => {
       value={selected}
       onValueChange={onChange}
     >
-      <Select.Trigger style={{ fontFamily: selected }} />
+      <Select.Trigger className="w-full" />
       <Select.Content>
         {fonts.map((font) => (
           <Select.Item

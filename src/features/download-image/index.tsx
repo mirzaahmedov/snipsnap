@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
-import { Button, DropdownMenu, Spinner } from "@radix-ui/themes";
+import { Button, DropdownMenu, IconButton, Spinner } from "@radix-ui/themes";
 import { useMutation } from "@tanstack/react-query";
 import { getUniqueFileName } from "@app/utils/file";
 
@@ -51,13 +51,13 @@ const DownloadImage = ({ editorRef }: DownloadImageProps) => {
           >
             Download
           </Button>
-          <Button
+          <IconButton
             type="button"
-            className="size-8 rounded-l-none border-solid border-0 border-l border-white/20 cursor-pointer"
+            className="rounded-l-none border-solid border-0 border-l border-white/20 cursor-pointer"
             disabled={isPending}
           >
             {isPending ? <Spinner /> : <DropdownMenu.TriggerIcon />}
-          </Button>
+          </IconButton>
         </div>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>

@@ -13,8 +13,8 @@ type OptionsActionType = {
 
 const useEditorOptions = create<EditorOptionsType & OptionsActionType>()(
   (set) => ({
-    colorscheme: "Solarized Dark",
-    programmingLanguage: "JavaScript",
+    colorscheme: "Material Dark",
+    programmingLanguage: "JSX",
     fontSize: 18,
     fontFamily: "Source Code Pro",
     background: "#fff",

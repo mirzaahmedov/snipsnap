@@ -1,1 +1,1 @@
-export { Editor } from "./component";
+export { Editor } from "./editor";

@@ -4,8 +4,14 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ["Inter", "sans-serif"],
-        mono: ["Source Code Pro", "monospace"],
+        body: ["Nunito", "sans-serif"],
+      },
+      fontSize: {
+        base: "14px",
+      },
+      colors: {
+        background: "#18181B",
+        "surface-1": "#27272A",
       },
     },
   },

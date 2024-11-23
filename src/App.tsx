@@ -13,14 +13,16 @@ const App = () => {
       direction="row"
       align="start"
       height="100%"
-      overflow="auto"
-      p="8"
     >
+      <Sidebar editorRef={editorRef} />
       <Flex
+        width="100%"
+        height="100%"
         flexGrow="1"
         direction="column"
         align="center"
         justify="center"
+        overflowY="auto"
       >
         <Editor
           editorRef={editorRef}
@@ -28,7 +30,6 @@ const App = () => {
           onChangeContent={setContent}
         />
       </Flex>
-      <Sidebar editorRef={editorRef} />
     </Flex>
   );
 };

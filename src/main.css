@@ -15,7 +15,7 @@
     @apply h-full;
   }
 
-  body {
-    @apply font-body;
+  * {
+    @apply font-body text-base;
   }
 }

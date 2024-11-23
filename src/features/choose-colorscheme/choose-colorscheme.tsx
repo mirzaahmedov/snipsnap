@@ -11,7 +11,7 @@ const ChooseColorscheme = ({ selected, onChange }: ChooseColorschemeProps) => {
       value={selected}
       onValueChange={onChange}
     >
-      <Select.Trigger></Select.Trigger>
+      <Select.Trigger className="w-full" />
       <Select.Content>
         {colorschemes.map(({ name }) => (
           <Select.Item
