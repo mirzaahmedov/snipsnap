@@ -110,18 +110,6 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
                   })
                 }
               />
-              <TextField.Root
-                value={editorParams.fontFamily}
-                onChange={(e) =>
-                  setEditorParams({
-                    fontFamily: e.target.value,
-                  })
-                }
-              >
-                <TextField.Slot>
-                  <TextIcon />
-                </TextField.Slot>
-              </TextField.Root>
             </Box>
             <Box>
               <TextField.Root

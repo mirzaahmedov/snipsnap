@@ -1,10 +1,10 @@
-import { Popover, TextField } from "@radix-ui/themes";
+import { Box, Flex, Popover, TextField } from "@radix-ui/themes";
 import { Command } from "cmdk";
 import { useToggle } from "@app/hooks";
 import { fonts } from "./data";
 
 import "./style.css";
-import { TextIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon, TextIcon } from "@radix-ui/react-icons";
 
 type ChooseFontProps = {
   selected: string;
@@ -18,19 +18,28 @@ const ChooseFont = ({ selected, onChange }: ChooseFontProps) => {
       onOpenChange={toggle.setState}
     >
       <Popover.Trigger>
-        <TextField.Root
-          value={selected}
-          onChange={(e) => onChange(e.target.value)}
-          className="rt-ComboboxTrigger"
-        >
-          <TextField.Slot>
-            <TextIcon />
-          </TextField.Slot>
-        </TextField.Root>
+        <Box>
+          <TextField.Root value={selected}>
+            <TextField.Slot>
+              <TextIcon />
+            </TextField.Slot>
+          </TextField.Root>
+        </Box>
       </Popover.Trigger>
       <Popover.Content className="rt-BaseMenuContent rt-ComboboxContent">
         <Command>
-          <Command.Input />
+          <Flex
+            align="center"
+            gap="2"
+          >
+            <Command.Input asChild>
+              <TextField.Root placeholder="Search font">
+                <TextField.Slot>
+                  <MagnifyingGlassIcon />
+                </TextField.Slot>
+              </TextField.Root>
+            </Command.Input>
+          </Flex>
           <Command.List className="rt-ComboboxList">
             {fonts.map((font) => (
               <Command.Item
@@ -40,6 +49,9 @@ const ChooseFont = ({ selected, onChange }: ChooseFontProps) => {
                 onSelect={() => {
                   onChange(font);
                   toggle.close();
+                }}
+                style={{
+                  fontFamily: font,
                 }}
               >
                 {font}
