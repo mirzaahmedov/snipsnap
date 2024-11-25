@@ -1,8 +1,12 @@
-.rt-ComboboxTrigger:where(.rt-variant-surface):is(
-    :has(.rt-TextFieldInput:is(:disabled, :read-only))
-  ) {
-  background-image: none;
-  box-shadow: inset 0 0 0 var(--text-field-border-width) var(--gray-a7);
+.rt-ComboboxTrigger.rt-variant-surface {
+  &:is(:has(.rt-TextFieldInput)) {
+    background-image: none;
+    box-shadow: inset 0 0 0 var(--text-field-border-width) var(--gray-a7);
+
+    & :is(.rt-TextFieldInput) {
+      opacity: 1;
+    }
+  }
 }
 
 .rt-ComboboxItem {
@@ -21,9 +25,16 @@
   }
 }
 
+.rt-ComboboxList {
+  & {
+    margin-top: 8px;
+  }
+}
+
 /* solid */
 
-.rt-ComboboxContent:where(.rt-variant-solid) {
+/* where(.rt-variant-solid) */
+.rt-ComboboxContent {
   & :where(.rt-ComboboxItem[data-selected="true"]) {
     background-color: var(--accent-9);
     color: var(--accent-contrast);
@@ -41,8 +52,8 @@
 
 /* soft */
 
-.rt-ComboboxContent:where(.rt-variant-soft) {
+/* .rt-ComboboxContent:where(.rt-variant-soft) {
   & :where(.rt-ComboboxItem[data-selected="true"]) {
     background-color: var(--accent-a4);
   }
-}
+} */

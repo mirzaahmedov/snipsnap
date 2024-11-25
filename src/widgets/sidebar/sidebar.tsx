@@ -5,7 +5,6 @@ import {
   Button,
   Flex,
   IconButton,
-  Select,
   Switch,
   TextField,
 } from "@radix-ui/themes";
