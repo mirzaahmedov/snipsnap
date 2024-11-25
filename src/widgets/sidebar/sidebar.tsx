@@ -1,7 +1,17 @@
 import type { RefObject } from "react";
 
-import { Box, Button, Flex, Slider, Switch, TextField } from "@radix-ui/themes";
 import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Select,
+  Switch,
+  TextField,
+} from "@radix-ui/themes";
+import {
+  CaretDownIcon,
+  CaretUpIcon,
   ClipboardCopyIcon,
   ColumnSpacingIcon,
   FontSizeIcon,
@@ -15,27 +25,16 @@ import {
   WidthIcon,
 } from "@radix-ui/react-icons";
 import { useEditorOptions } from "@app/shared/stores/options";
-import {
-  ChooseFont,
-  ChooseBackground,
-  ChooseColorscheme,
-  ChooseProgrammingLanguage,
-  DownloadImage,
-} from "@app/features";
+import { ChooseFont, DownloadImage } from "@app/features";
 import { Fieldset } from "@app/components";
+import { useEditorParams } from "@app/shared/hooks/editor-params";
 
 type SidebarProps = {
   editorRef: RefObject<HTMLDivElement>;
 };
 const Sidebar = ({ editorRef }: SidebarProps) => {
-  const {
-    background,
-    colorscheme,
-    programmingLanguage,
-    fontSize,
-    fontFamily,
-    setEditorOptions,
-  } = useEditorOptions();
+  const { editorParams, setEditorParams } = useEditorParams();
+  const { background, colorscheme, programmingLanguage } = useEditorOptions();
 
   return (
     <Box
@@ -104,16 +103,68 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
 
           <Fieldset legend="Font">
             <Box>
-              <TextField.Root value={fontFamily}>
+              <ChooseFont
+                selected={editorParams.fontFamily}
+                onChange={(value) =>
+                  setEditorParams({
+                    fontFamily: value,
+                  })
+                }
+              />
+              <TextField.Root
+                value={editorParams.fontFamily}
+                onChange={(e) =>
+                  setEditorParams({
+                    fontFamily: e.target.value,
+                  })
+                }
+              >
                 <TextField.Slot>
                   <TextIcon />
                 </TextField.Slot>
               </TextField.Root>
             </Box>
             <Box>
-              <TextField.Root value={fontSize}>
+              <TextField.Root
+                type="number"
+                step="1"
+                min="10"
+                max="30"
+                value={editorParams.fontSize.toString()}
+                onChange={(e) =>
+                  setEditorParams({
+                    fontSize: Number(e.target.value),
+                  })
+                }
+              >
                 <TextField.Slot>
                   <FontSizeIcon />
+                </TextField.Slot>
+                <TextField.Slot>
+                  <Flex gap="2">
+                    <IconButton
+                      size="1"
+                      variant="ghost"
+                      onClick={() => {
+                        setEditorParams((params) => ({
+                          fontSize: params.fontSize + 1,
+                        }));
+                      }}
+                    >
+                      <CaretUpIcon />
+                    </IconButton>
+                    <IconButton
+                      size="1"
+                      variant="ghost"
+                      onClick={() => {
+                        setEditorParams((params) => ({
+                          fontSize: params.fontSize - 1,
+                        }));
+                      }}
+                    >
+                      <CaretDownIcon />
+                    </IconButton>
+                  </Flex>
                 </TextField.Slot>
               </TextField.Root>
             </Box>

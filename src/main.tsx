@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/react";
 import { Theme } from "@radix-ui/themes";
 
 import App from "./App";
@@ -17,7 +18,9 @@ createRoot(document.getElementById("root")!).render(
         appearance="dark"
         className="h-full"
       >
-        <App />
+        <NuqsAdapter>
+          <App />
+        </NuqsAdapter>
       </Theme>
     </QueryClientProvider>
   </StrictMode>,

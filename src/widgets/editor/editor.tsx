@@ -10,6 +10,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { useEditorOptions } from "@app/shared/stores/options";
 import { colorschemes } from "@app/features";
 import { isDataURL } from "@app/utils/base64";
+import { useEditorParams } from "@app/shared/hooks/editor-params";
 
 type EditorProps = {
   editorRef: RefObject<HTMLDivElement>;
@@ -19,8 +20,8 @@ type EditorProps = {
 const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
   const [langSupport, setLangSupport] = useState<Extension>(javascript());
 
-  const { programmingLanguage, colorscheme, fontSize, fontFamily, background } =
-    useEditorOptions();
+  const { editorParams } = useEditorParams();
+  const { programmingLanguage, colorscheme, background } = useEditorOptions();
 
   const onChange = useCallback(
     (value: string) => {
@@ -41,20 +42,22 @@ const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
       ?.colorscheme;
   }, [colorscheme]);
 
-  const extensions = useMemo(
-    () => [
+  const extensions = useMemo(() => {
+    console.log({ editorParams });
+    return [
       lineNumbers(),
       langSupport,
       EditorView.lineWrapping,
       EditorView.theme({
         "& .cm-scroller": {
-          fontSize: `${fontSize}px`,
-          fontFamily: `'${fontFamily}', monospace`,
+          fontSize: `${editorParams.fontSize}px !important`,
+          fontFamily: `'${editorParams.fontFamily}', monospace`,
         },
       }),
-    ],
-    [langSupport, fontSize, fontFamily],
-  );
+    ];
+  }, [langSupport, editorParams]);
+
+  console.log({ editorParams });
 
   return (
     <Box
