@@ -6,20 +6,32 @@ import {
   FontSizeIcon,
 } from "@radix-ui/react-icons";
 
-type NumericFieldProps = TextField.RootProps &
-  React.RefAttributes<HTMLInputElement>;
+type NumericFieldProps = Omit<
+  TextField.RootProps & React.RefAttributes<HTMLInputElement>,
+  "value" | "onChange"
+> & {
+  value: number;
+  onChange?: (value: number) => void;
+};
 
 const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
-  (props, forwardedRef) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    const ref = forwardedRef ?? inputRef;
+  ({ value, onChange, ...props }, forwardedRef) => {
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
     return (
       <TextField.Root
-        ref={ref}
+        ref={(ref) => {
+          inputRef.current = ref;
+          if (!forwardedRef) return;
+          if (typeof forwardedRef === "function") {
+            forwardedRef(ref);
+            return;
+          }
+          forwardedRef.current = ref;
+        }}
         type="number"
-        step="1"
-        min="10"
-        max="30"
+        value={value}
+        onChange={(e) => onChange?.(Number(e.currentTarget.value))}
         {...props}
       >
         <TextField.Slot>
@@ -30,6 +42,10 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
             <IconButton
               size="1"
               variant="ghost"
+              onClick={() => {
+                if (!inputRef.current) return;
+                inputRef.current.valueAsNumber += 1;
+              }}
             >
               <CaretUpIcon />
             </IconButton>
@@ -37,9 +53,8 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
               size="1"
               variant="ghost"
               onClick={() => {
-                setEditorParams((params) => ({
-                  fontSize: params.fontSize - 1,
-                }));
+                if (!inputRef.current) return;
+                inputRef.current.valueAsNumber -= 1;
               }}
             >
               <CaretDownIcon />
@@ -50,5 +65,7 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
     );
   },
 );
+
+NumericField.displayName = "NumericField";
 
 export { NumericField };

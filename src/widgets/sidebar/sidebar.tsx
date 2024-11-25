@@ -1,31 +1,20 @@
 import type { RefObject } from "react";
 
+import { Box, Button, Flex, Switch, TextField } from "@radix-ui/themes";
 import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Switch,
-  TextField,
-} from "@radix-ui/themes";
-import {
-  CaretDownIcon,
-  CaretUpIcon,
   ClipboardCopyIcon,
   ColumnSpacingIcon,
-  FontSizeIcon,
   GearIcon,
   Half2Icon,
   HeightIcon,
   LetterSpacingIcon,
   LineHeightIcon,
   RowSpacingIcon,
-  TextIcon,
   WidthIcon,
 } from "@radix-ui/react-icons";
 import { useEditorOptions } from "@app/shared/stores/options";
 import { ChooseFont, DownloadImage } from "@app/features";
-import { Fieldset } from "@app/components";
+import { Fieldset, NumericField } from "@app/components";
 import { useEditorParams } from "@app/shared/hooks/editor-params";
 
 type SidebarProps = {
@@ -112,48 +101,18 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
               />
             </Box>
             <Box>
-              <TextField.Root
+              <NumericField
                 type="number"
                 step="1"
                 min="10"
                 max="30"
-                value={editorParams.fontSize.toString()}
-                onChange={(e) =>
+                value={editorParams.fontSize}
+                onChange={(value) =>
                   setEditorParams({
-                    fontSize: Number(e.target.value),
+                    fontSize: value,
                   })
                 }
-              >
-                <TextField.Slot>
-                  <FontSizeIcon />
-                </TextField.Slot>
-                <TextField.Slot>
-                  <Flex gap="2">
-                    <IconButton
-                      size="1"
-                      variant="ghost"
-                      onClick={() => {
-                        setEditorParams((params) => ({
-                          fontSize: params.fontSize + 1,
-                        }));
-                      }}
-                    >
-                      <CaretUpIcon />
-                    </IconButton>
-                    <IconButton
-                      size="1"
-                      variant="ghost"
-                      onClick={() => {
-                        setEditorParams((params) => ({
-                          fontSize: params.fontSize - 1,
-                        }));
-                      }}
-                    >
-                      <CaretDownIcon />
-                    </IconButton>
-                  </Flex>
-                </TextField.Slot>
-              </TextField.Root>
+              />
             </Box>
             <Box>
               <TextField.Root>
