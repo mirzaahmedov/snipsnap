@@ -8,10 +8,10 @@ import { Children, cloneElement, forwardRef, isValidElement } from "react";
 import { twMerge } from "tailwind-merge";
 import { useToggle } from "@app/hooks";
 import { Command } from "cmdk";
-import { Box, Flex, Popover, TextField } from "@radix-ui/themes";
+import { Popover, TextField, ScrollArea } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
-import "./style.css";
+import "./combo-select.css";
 
 type ComboSelectProps = PropsWithChildren<{
   trigger: ReactNode;
@@ -19,14 +19,16 @@ type ComboSelectProps = PropsWithChildren<{
   onChange?: (value: string) => void;
 }>;
 const ComboSelect = forwardRef<HTMLDivElement, ComboSelectProps>(
-  ({ children, trigger, value }) => {
+  ({ children, trigger, value, onChange }, ref) => {
     const toggle = useToggle();
 
     const clonedChildren = Children.map(children, (child) => {
       if (isValidElement(child)) {
         return cloneElement(child, {
+          // @ts-expect-error onSelect is not a valid prop for all children
           onSelect: (value: string) => {
             toggle.close();
+            onChange?.(value);
             child.props.onSelect?.(value);
           },
         });
@@ -40,25 +42,30 @@ const ComboSelect = forwardRef<HTMLDivElement, ComboSelectProps>(
         onOpenChange={toggle.setState}
       >
         <Popover.Trigger>
-          <Box>{trigger}</Box>
+          <button>{trigger}</button>
         </Popover.Trigger>
         <Popover.Content className="rt-BaseMenuContent rt-ComboboxContent">
-          <Command value={value}>
-            <Flex
-              align="center"
-              gap="2"
+          <Command
+            value={value}
+            ref={ref}
+            className="flex flex-col gap-2 h-full overflow-hidden"
+          >
+            <Command.Input asChild>
+              <TextField.Root placeholder="Search font">
+                <TextField.Slot>
+                  <MagnifyingGlassIcon />
+                </TextField.Slot>
+              </TextField.Root>
+            </Command.Input>
+            <ScrollArea
+              type="auto"
+              scrollbars="vertical"
+              className="flex-1"
             >
-              <Command.Input asChild>
-                <TextField.Root placeholder="Search font">
-                  <TextField.Slot>
-                    <MagnifyingGlassIcon />
-                  </TextField.Slot>
-                </TextField.Root>
-              </Command.Input>
-            </Flex>
-            <Command.List className="rt-ComboboxList">
-              {clonedChildren}
-            </Command.List>
+              <Command.List className="rt-ComboboxList">
+                {clonedChildren}
+              </Command.List>
+            </ScrollArea>
           </Command>
         </Popover.Content>
       </Popover.Root>

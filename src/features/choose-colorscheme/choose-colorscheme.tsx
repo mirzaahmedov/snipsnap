@@ -1,5 +1,7 @@
-import { Select } from "@radix-ui/themes";
+import { TextField } from "@radix-ui/themes";
+import { ComboSelect } from "@app/components";
 import { colorschemes } from "./data";
+import { Half2Icon } from "@radix-ui/react-icons";
 
 type ChooseColorschemeProps = {
   selected: string;
@@ -7,22 +9,25 @@ type ChooseColorschemeProps = {
 };
 const ChooseColorscheme = ({ selected, onChange }: ChooseColorschemeProps) => {
   return (
-    <Select.Root
-      value={selected}
-      onValueChange={onChange}
+    <ComboSelect
+      onChange={onChange}
+      trigger={
+        <TextField.Root value={selected}>
+          <TextField.Slot>
+            <Half2Icon />
+          </TextField.Slot>
+        </TextField.Root>
+      }
     >
-      <Select.Trigger className="w-full" />
-      <Select.Content>
-        {colorschemes.map(({ name }) => (
-          <Select.Item
-            key={name}
-            value={name}
-          >
-            {name}
-          </Select.Item>
-        ))}
-      </Select.Content>
-    </Select.Root>
+      {colorschemes.map(({ name }) => (
+        <ComboSelect.Item
+          key={name}
+          value={name}
+        >
+          {name}
+        </ComboSelect.Item>
+      ))}
+    </ComboSelect>
   );
 };
 

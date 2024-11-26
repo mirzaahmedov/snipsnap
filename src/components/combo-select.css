@@ -31,6 +31,10 @@
 
 /* where(.rt-variant-solid) */
 .rt-ComboboxContent {
+  & {
+    max-height: var(--radix-popover-content-available-height);
+  }
+
   & :where(.rt-ComboboxItem[data-selected="true"]) {
     background-color: var(--accent-9);
     color: var(--accent-contrast);
@@ -45,11 +49,3 @@
     }
   }
 }
-
-/* soft */
-
-/* .rt-ComboboxContent:where(.rt-variant-soft) {
-  & :where(.rt-ComboboxItem[data-selected="true"]) {
-    background-color: var(--accent-a4);
-  }
-} */

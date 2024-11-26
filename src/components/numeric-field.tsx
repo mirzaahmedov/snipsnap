@@ -44,7 +44,7 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
               variant="ghost"
               onClick={() => {
                 if (!inputRef.current) return;
-                inputRef.current.valueAsNumber += 1;
+                onChange?.(inputRef.current.valueAsNumber + 1);
               }}
             >
               <CaretUpIcon />
@@ -54,7 +54,7 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
               variant="ghost"
               onClick={() => {
                 if (!inputRef.current) return;
-                inputRef.current.valueAsNumber -= 1;
+                onChange?.(inputRef.current.valueAsNumber - 1);
               }}
             >
               <CaretDownIcon />

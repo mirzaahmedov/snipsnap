@@ -4,16 +4,18 @@ import { Box, Button, Flex, Switch, TextField } from "@radix-ui/themes";
 import {
   ClipboardCopyIcon,
   ColumnSpacingIcon,
-  GearIcon,
-  Half2Icon,
   HeightIcon,
   LetterSpacingIcon,
   LineHeightIcon,
   RowSpacingIcon,
   WidthIcon,
 } from "@radix-ui/react-icons";
-import { useEditorOptions } from "@app/shared/stores/options";
-import { ChooseFont, DownloadImage } from "@app/features";
+import {
+  ChooseColorscheme,
+  ChooseFont,
+  ChooseSyntax,
+  DownloadImage,
+} from "@app/features";
 import { Fieldset, NumericField } from "@app/components";
 import { useEditorParams } from "@app/shared/hooks/editor-params";
 
@@ -22,7 +24,8 @@ type SidebarProps = {
 };
 const Sidebar = ({ editorRef }: SidebarProps) => {
   const { editorParams, setEditorParams } = useEditorParams();
-  const { background, colorscheme, programmingLanguage } = useEditorOptions();
+
+  console.log({ editorParams });
 
   return (
     <Box
@@ -76,11 +79,11 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
 
           <Fieldset legend="Background">
             <Box>
-              <TextField.Root value={background}>
+              <TextField.Root value={editorParams.background}>
                 <TextField.Slot>
                   <Box
                     style={{
-                      background: background,
+                      background: editorParams.background,
                     }}
                     className="size-4 rounded-sm"
                   />
@@ -93,9 +96,9 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
             <Box>
               <ChooseFont
                 selected={editorParams.fontFamily}
-                onChange={(value) =>
+                onChange={(fontFamily) =>
                   setEditorParams({
-                    fontFamily: value,
+                    fontFamily,
                   })
                 }
               />
@@ -107,9 +110,9 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
                 min="10"
                 max="30"
                 value={editorParams.fontSize}
-                onChange={(value) =>
+                onChange={(fontSize) =>
                   setEditorParams({
-                    fontSize: value,
+                    fontSize,
                   })
                 }
               />
@@ -132,18 +135,22 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
 
           <Fieldset legend="Editor">
             <Box>
-              <TextField.Root value={programmingLanguage}>
-                <TextField.Slot>
-                  <GearIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <ChooseSyntax
+                selected={editorParams.syntax}
+                onChange={(syntax) =>
+                  setEditorParams({
+                    syntax,
+                  })
+                }
+              />
             </Box>
             <Box>
-              <TextField.Root value={colorscheme}>
-                <TextField.Slot>
-                  <Half2Icon />
-                </TextField.Slot>
-              </TextField.Root>
+              <ChooseColorscheme
+                selected={editorParams.colorscheme}
+                onChange={(colorscheme) => {
+                  setEditorParams({ colorscheme });
+                }}
+              />
             </Box>
             <Flex
               direction="column"

@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 type EditorOptionsType = {
   colorscheme: string;
-  programmingLanguage: string;
+  syntax: string;
   fontSize: number;
   fontFamily: string;
   background: string;
@@ -14,7 +14,7 @@ type OptionsActionType = {
 const useEditorOptions = create<EditorOptionsType & OptionsActionType>()(
   (set) => ({
     colorscheme: "Material Dark",
-    programmingLanguage: "JSX",
+    syntax: "JSX",
     fontSize: 18,
     fontFamily: "Source Code Pro",
     background: "#fff",

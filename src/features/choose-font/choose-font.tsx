@@ -11,6 +11,7 @@ type ChooseFontProps = {
 const ChooseFont = ({ selected, onChange }: ChooseFontProps) => {
   return (
     <ComboSelect
+      onChange={onChange}
       trigger={
         <TextField.Root value={selected}>
           <TextField.Slot>
@@ -23,7 +24,6 @@ const ChooseFont = ({ selected, onChange }: ChooseFontProps) => {
         <ComboSelect.Item
           key={font}
           value={font}
-          onSelect={onChange}
         >
           {font}
         </ComboSelect.Item>

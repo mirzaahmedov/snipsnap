@@ -1,52 +1,43 @@
 import type { RefObject } from "react";
 
-import { useCallback, useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import { Box } from "@radix-ui/themes";
 import CodeMirror, { Extension, lineNumbers } from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
 import { MacosFrame } from "@app/components/frames";
 import { languages } from "@codemirror/language-data";
 import { javascript } from "@codemirror/lang-javascript";
-import { useEditorOptions } from "@app/shared/stores/options";
-import { colorschemes } from "@app/features";
+import { colorschemes, useSyntaxParam } from "@app/features";
 import { isDataURL } from "@app/utils/base64";
 import { useEditorParams } from "@app/shared/hooks/editor-params";
 
 type EditorProps = {
   editorRef: RefObject<HTMLDivElement>;
-  content: string;
-  onChangeContent: (content: string) => void;
 };
-const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
-  const [langSupport, setLangSupport] = useState<Extension>(javascript());
+const Editor = ({ editorRef }: EditorProps) => {
+  const [syntaxExtension, setSyntaxExtension] =
+    useState<Extension>(javascript());
 
-  const { editorParams } = useEditorParams();
-  const { programmingLanguage, colorscheme, background } = useEditorOptions();
-
-  const onChange = useCallback(
-    (value: string) => {
-      onChangeContent(value);
-    },
-    [onChangeContent],
-  );
+  const [syntax] = useSyntaxParam();
+  const { editorParams, setEditorParams } = useEditorParams();
 
   useEffect(() => {
     languages
-      .find((lang) => lang.name === programmingLanguage)
+      .find((lang) => lang.name === syntax)
       ?.load()
-      .then(setLangSupport);
-  }, [programmingLanguage]);
+      .then(setSyntaxExtension);
+  }, [syntax]);
 
   const theme = useMemo(() => {
-    return colorschemes.find((scheme) => scheme.name === colorscheme)
-      ?.colorscheme;
-  }, [colorscheme]);
+    return colorschemes.find(
+      (scheme) => scheme.name === editorParams.colorscheme,
+    )?.colorscheme;
+  }, [editorParams.colorscheme]);
 
   const extensions = useMemo(() => {
-    console.log({ editorParams });
     return [
       lineNumbers(),
-      langSupport,
+      syntaxExtension,
       EditorView.lineWrapping,
       EditorView.theme({
         "& .cm-scroller": {
@@ -55,9 +46,14 @@ const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
         },
       }),
     ];
-  }, [langSupport, editorParams]);
+  }, [syntaxExtension, editorParams]);
 
-  console.log({ editorParams });
+  const handleChange = useCallback(
+    (textContent: string) => {
+      setEditorParams({ textContent });
+    },
+    [setEditorParams],
+  );
 
   return (
     <Box
@@ -66,14 +62,16 @@ const Editor = ({ editorRef, content, onChangeContent }: EditorProps) => {
       maxWidth="1000px"
       className="p-10"
       style={{
-        background: isDataURL(background) ? `url(${background})` : background,
+        background: isDataURL(editorParams.background)
+          ? `url(${editorParams.background})`
+          : editorParams.background,
       }}
     >
       <MacosFrame className="shadow-xl shadow-black/40 font-mono">
         <CodeMirror
           id="editor"
-          value={content}
-          onChange={onChange}
+          defaultValue={editorParams.textContent}
+          onChange={handleChange}
           theme={theme}
           extensions={extensions}
         />
