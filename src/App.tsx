@@ -1,6 +1,9 @@
 import { useRef } from "react";
-import { Flex } from "@radix-ui/themes";
-import { Sidebar, Editor } from "@app/widgets";
+import { Flex, ScrollArea } from "@radix-ui/themes";
+import { Sidebar, Editor, Header } from "@app/widgets";
+import { ToastContainer } from "react-toastify";
+
+import "react-toastify/ReactToastify.css";
 
 const App = () => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -11,17 +14,30 @@ const App = () => {
       align="start"
       height="100%"
     >
+      <ToastContainer />
       <Sidebar editorRef={editorRef} />
       <Flex
         width="100%"
         height="100%"
-        flexGrow="1"
         direction="column"
         align="center"
-        justify="center"
-        overflowY="auto"
       >
-        <Editor editorRef={editorRef} />
+        <Header />
+        <Flex
+          direction="column"
+          justify="center"
+          align="center"
+          flexGrow="1"
+          overflow="hidden"
+        >
+          <ScrollArea
+            type="always"
+            scrollbars="vertical"
+            className="bg-red-500 h-fit"
+          >
+            <Editor editorRef={editorRef} />
+          </ScrollArea>
+        </Flex>
       </Flex>
     </Flex>
   );

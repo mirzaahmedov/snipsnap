@@ -1,81 +1,123 @@
 import type { RefObject } from "react";
 
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Box } from "@radix-ui/themes";
-import CodeMirror, { Extension, lineNumbers } from "@uiw/react-codemirror";
+import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
-import { MacosFrame } from "@app/components/frames";
 import { languages } from "@codemirror/language-data";
-import { javascript } from "@codemirror/lang-javascript";
-import { colorschemes, useSyntaxParam } from "@app/features";
-import { isDataURL } from "@app/utils/base64";
+import { colorschemes } from "@app/features";
 import { useEditorParams } from "@app/shared/hooks/editor-params";
+import { useAsyncMemo } from "@app/shared/hooks/async-memo";
+import { useDebounceEffect } from "@app/shared/hooks/debounce-effect";
+import { WindowFrame } from "@app/common/components/window-frame";
+import { useColorStore } from "@app/shared/store";
 
 type EditorProps = {
   editorRef: RefObject<HTMLDivElement>;
 };
 const Editor = ({ editorRef }: EditorProps) => {
-  const [syntaxExtension, setSyntaxExtension] =
-    useState<Extension>(javascript());
+  const prevEditorBG = useRef<string | null>(null);
+  const prevCode = useRef<string | null>(null);
 
-  const [syntax] = useSyntaxParam();
-  const { editorParams, setEditorParams } = useEditorParams();
+  const { bg: editorBG, setColors } = useColorStore();
+  const { params, setParams } = useEditorParams();
+  const {
+    code,
+    lang,
+    theme,
+    fsize,
+    ffamily,
+    bg,
+    frame,
+    lheight,
+    lspace,
+    rounded,
+    shadow,
+    width,
+    height,
+    ph,
+    pv,
+    numbers,
+    wrap,
+  } = params;
 
-  useEffect(() => {
-    languages
-      .find((lang) => lang.name === syntax)
-      ?.load()
-      .then(setSyntaxExtension);
-  }, [syntax]);
+  const [value, setValue] = useState(code);
 
-  const theme = useMemo(() => {
-    return colorschemes.find(
-      (scheme) => scheme.name === editorParams.colorscheme,
-    )?.colorscheme;
-  }, [editorParams.colorscheme]);
+  const langExtension = useAsyncMemo(async () => {
+    const found = languages.find((option) => option.name === lang);
+    if (found) {
+      return await found.load();
+    }
+    return null;
+  }, [lang]);
+  const themeExtension = useMemo(() => {
+    return colorschemes.find((scheme) => scheme.name === theme)?.colorscheme;
+  }, [theme]);
 
   const extensions = useMemo(() => {
     return [
-      lineNumbers(),
-      syntaxExtension,
-      EditorView.lineWrapping,
+      wrap ? EditorView.lineWrapping : null,
+      langExtension,
+      themeExtension,
       EditorView.theme({
         "& .cm-scroller": {
-          fontSize: `${editorParams.fontSize}px !important`,
-          fontFamily: `'${editorParams.fontFamily}', monospace`,
+          fontSize: `${fsize}px !important`,
+          fontFamily: `'${ffamily}', monospace`,
+          lineHeight: lheight,
+          letterSpacing: `${lspace}px`,
         },
       }),
-    ];
-  }, [syntaxExtension, editorParams]);
+    ].filter((value) => !!value);
+  }, [langExtension, themeExtension, fsize, ffamily, lheight, lspace, wrap]);
 
-  const handleChange = useCallback(
-    (textContent: string) => {
-      setEditorParams({ textContent });
+  useDebounceEffect(
+    () => {
+      if (prevCode.current === value) return;
+      setParams({ code: value });
+      prevCode.current = value;
     },
-    [setEditorParams],
+    1000,
+    [setParams, value],
   );
 
   return (
     <Box
       ref={editorRef}
-      width="100%"
-      maxWidth="1000px"
-      className="p-10"
       style={{
-        background: isDataURL(editorParams.background)
-          ? `url(${editorParams.background})`
-          : editorParams.background,
+        background: bg,
+        paddingTop: pv,
+        paddingBottom: pv,
+        paddingLeft: ph,
+        paddingRight: ph,
       }}
     >
-      <MacosFrame className="shadow-xl shadow-black/40 font-mono">
+      <WindowFrame
+        variant={frame}
+        shadow={shadow}
+        rounded={rounded}
+        background={editorBG}
+      >
         <CodeMirror
           id="editor"
-          defaultValue={editorParams.textContent}
-          onChange={handleChange}
-          theme={theme}
+          value={value}
+          onChange={setValue}
+          theme={themeExtension}
           extensions={extensions}
+          width={`${width}px`}
+          height={`${height}px`}
+          basicSetup={{
+            lineNumbers: numbers,
+          }}
+          onUpdate={(view) => {
+            const editor = view.view.dom;
+            const styles = window.getComputedStyle(editor);
+            const bgColor = styles.getPropertyValue("background-color");
+            if (prevEditorBG.current === bgColor) return;
+            setColors({ bg: bgColor });
+            prevEditorBG.current = bgColor;
+          }}
         />
-      </MacosFrame>
+      </WindowFrame>
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import { TextField } from "@radix-ui/themes";
-import { ComboSelect } from "@app/components";
+import { ComboSelect } from "@app/common/components";
 import { colorschemes } from "./data";
 import { Half2Icon } from "@radix-ui/react-icons";
 

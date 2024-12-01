@@ -44,6 +44,7 @@
     "react-dom": "^18.3.1",
     "react-gcolor-picker": "^1.3.3",
     "react-syntax-highlighter": "^15.6.1",
+    "react-toastify": "^10.0.6",
     "tailwind-merge": "^2.5.4",
     "zod": "^3.23.8",
     "zustand": "^5.0.1"

@@ -1,1 +1,0 @@
-export { ChooseBackground } from "./component";

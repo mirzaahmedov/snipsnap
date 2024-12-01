@@ -1,21 +1,22 @@
+import type { ReactNode } from "react";
+
 import { forwardRef, useRef } from "react";
 import { Flex, IconButton, TextField } from "@radix-ui/themes";
-import {
-  CaretDownIcon,
-  CaretUpIcon,
-  FontSizeIcon,
-} from "@radix-ui/react-icons";
+import { CaretDownIcon, CaretUpIcon } from "@radix-ui/react-icons";
+import { roundNumberToDecimalPlaces } from "../utils/number";
 
 type NumericFieldProps = Omit<
   TextField.RootProps & React.RefAttributes<HTMLInputElement>,
   "value" | "onChange"
 > & {
-  value: number;
+  icon: ReactNode;
+  step?: number;
+  value?: number;
   onChange?: (value: number) => void;
 };
 
 const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
-  ({ value, onChange, ...props }, forwardedRef) => {
+  ({ icon, step = 1, value, onChange, ...props }, forwardedRef) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     return (
@@ -30,21 +31,29 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
           forwardedRef.current = ref;
         }}
         type="number"
-        value={value}
-        onChange={(e) => onChange?.(Number(e.currentTarget.value))}
+        value={value ? Number(value).toString() : undefined}
+        onChange={(e) =>
+          onChange?.(
+            roundNumberToDecimalPlaces(Number(e.currentTarget.value), 2),
+          )
+        }
         {...props}
       >
-        <TextField.Slot>
-          <FontSizeIcon />
-        </TextField.Slot>
+        <TextField.Slot>{icon}</TextField.Slot>
         <TextField.Slot>
           <Flex gap="2">
             <IconButton
               size="1"
               variant="ghost"
               onClick={() => {
-                if (!inputRef.current) return;
-                onChange?.(inputRef.current.valueAsNumber + 1);
+                if (!inputRef.current || isNaN(inputRef.current.valueAsNumber))
+                  return;
+                onChange?.(
+                  roundNumberToDecimalPlaces(
+                    inputRef.current.valueAsNumber + step,
+                    2,
+                  ),
+                );
               }}
             >
               <CaretUpIcon />
@@ -53,8 +62,14 @@ const NumericField = forwardRef<HTMLInputElement, NumericFieldProps>(
               size="1"
               variant="ghost"
               onClick={() => {
-                if (!inputRef.current) return;
-                onChange?.(inputRef.current.valueAsNumber - 1);
+                if (!inputRef.current || isNaN(inputRef.current.valueAsNumber))
+                  return;
+                onChange?.(
+                  roundNumberToDecimalPlaces(
+                    inputRef.current.valueAsNumber - step,
+                    2,
+                  ),
+                );
               }}
             >
               <CaretDownIcon />

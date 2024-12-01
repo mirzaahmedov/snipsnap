@@ -1,16 +1,18 @@
 import { TextField } from "@radix-ui/themes";
-import { ComboSelect } from "@app/components";
+import { ComboSelect } from "@app/common/components";
 import { GearIcon } from "@radix-ui/react-icons";
 import { languages } from "@codemirror/language-data";
-import { useSyntaxParam } from "./hooks";
 
-const ChooseSyntax = () => {
-  const [syntax, setSyntax] = useSyntaxParam();
+type ChooseSyntaxProps = {
+  selected: string;
+  onChange: (syntax: string) => void;
+};
+const ChooseSyntax = ({ selected, onChange }: ChooseSyntaxProps) => {
   return (
     <ComboSelect
-      onChange={setSyntax}
+      onChange={onChange}
       trigger={
-        <TextField.Root value={syntax}>
+        <TextField.Root value={selected}>
           <TextField.Slot>
             <GearIcon />
           </TextField.Slot>

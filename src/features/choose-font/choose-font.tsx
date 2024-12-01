@@ -1,6 +1,6 @@
 import "./style.css";
 import { TextIcon } from "@radix-ui/react-icons";
-import { ComboSelect } from "@app/components";
+import { ComboSelect } from "@app/common/components";
 import { TextField } from "@radix-ui/themes";
 import { fonts } from "./data";
 

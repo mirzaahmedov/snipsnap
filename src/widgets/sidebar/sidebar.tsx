@@ -1,9 +1,9 @@
 import type { RefObject } from "react";
 
-import { Box, Button, Flex, Switch, TextField } from "@radix-ui/themes";
+import { Box, Flex, Checkbox, Text } from "@radix-ui/themes";
 import {
-  ClipboardCopyIcon,
   ColumnSpacingIcon,
+  FontSizeIcon,
   HeightIcon,
   LetterSpacingIcon,
   LineHeightIcon,
@@ -11,21 +11,41 @@ import {
   WidthIcon,
 } from "@radix-ui/react-icons";
 import {
+  ChooseBG,
   ChooseColorscheme,
   ChooseFont,
   ChooseSyntax,
   DownloadImage,
 } from "@app/features";
-import { Fieldset, NumericField } from "@app/components";
+import { Fieldset, NumericField } from "@app/common/components";
 import { useEditorParams } from "@app/shared/hooks/editor-params";
+import { ChooseFrame } from "@app/features/choose-frame";
+import { CopyImage } from "@app/features/copy-image";
 
 type SidebarProps = {
   editorRef: RefObject<HTMLDivElement>;
 };
 const Sidebar = ({ editorRef }: SidebarProps) => {
-  const { editorParams, setEditorParams } = useEditorParams();
+  const { params, setParams } = useEditorParams();
 
-  console.log({ editorParams });
+  const {
+    bg,
+    ffamily,
+    fsize,
+    lheight,
+    lspace,
+    lang,
+    theme,
+    width,
+    height,
+    ph,
+    pv,
+    wrap,
+    numbers,
+    shadow,
+    frame,
+    rounded,
+  } = params;
 
   return (
     <Box
@@ -45,130 +65,228 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
         >
           <Fieldset legend="Window">
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <WidthIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<WidthIcon />}
+                step={10}
+                placeholder="Auto"
+                value={width ? width : undefined}
+                onChange={(width) =>
+                  setParams({ width: width ? width : undefined })
+                }
+              />
             </Box>
 
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <HeightIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<HeightIcon />}
+                step={10}
+                placeholder="Auto"
+                value={height ? height : undefined}
+                onChange={(height) =>
+                  setParams({ height: height ? height : undefined })
+                }
+              />
             </Box>
 
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <ColumnSpacingIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<ColumnSpacingIcon />}
+                step={10}
+                value={ph}
+                onChange={(ph) => setParams({ ph })}
+              />
             </Box>
 
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <RowSpacingIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<RowSpacingIcon />}
+                step={10}
+                value={pv}
+                onChange={(pv) => setParams({ pv })}
+              />
+            </Box>
+
+            <Box className="col-span-2">
+              <ChooseFrame
+                selected={frame}
+                onChange={(frame) =>
+                  setParams({
+                    frame,
+                  })
+                }
+              />
             </Box>
           </Fieldset>
 
           <Fieldset legend="Background">
             <Box>
-              <TextField.Root value={editorParams.background}>
-                <TextField.Slot>
-                  <Box
-                    style={{
-                      background: editorParams.background,
-                    }}
-                    className="size-4 rounded-sm"
-                  />
-                </TextField.Slot>
-              </TextField.Root>
+              <ChooseBG
+                selected={bg}
+                onChange={(bg) => setParams({ bg })}
+              />
             </Box>
           </Fieldset>
 
           <Fieldset legend="Font">
             <Box>
               <ChooseFont
-                selected={editorParams.fontFamily}
-                onChange={(fontFamily) =>
-                  setEditorParams({
-                    fontFamily,
+                selected={ffamily}
+                onChange={(ffamily) =>
+                  setParams({
+                    ffamily,
                   })
                 }
               />
             </Box>
             <Box>
               <NumericField
-                type="number"
-                step="1"
-                min="10"
-                max="30"
-                value={editorParams.fontSize}
-                onChange={(fontSize) =>
-                  setEditorParams({
-                    fontSize,
+                icon={<FontSizeIcon />}
+                value={fsize}
+                onChange={(fsize) =>
+                  setParams({
+                    fsize,
                   })
                 }
               />
             </Box>
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <LineHeightIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<LineHeightIcon />}
+                step={0.1}
+                value={lheight}
+                onChange={(lheight) =>
+                  setParams({
+                    lheight,
+                  })
+                }
+              />
             </Box>
             <Box>
-              <TextField.Root>
-                <TextField.Slot>
-                  <LetterSpacingIcon />
-                </TextField.Slot>
-              </TextField.Root>
+              <NumericField
+                icon={<LetterSpacingIcon />}
+                step={0.05}
+                value={lspace}
+                onChange={(lspace) =>
+                  setParams({
+                    lspace,
+                  })
+                }
+              />
             </Box>
           </Fieldset>
 
           <Fieldset legend="Editor">
             <Box>
               <ChooseSyntax
-                selected={editorParams.syntax}
-                onChange={(syntax) =>
-                  setEditorParams({
-                    syntax,
+                selected={lang}
+                onChange={(lang) =>
+                  setParams({
+                    lang,
                   })
                 }
               />
             </Box>
             <Box>
               <ChooseColorscheme
-                selected={editorParams.colorscheme}
-                onChange={(colorscheme) => {
-                  setEditorParams({ colorscheme });
+                selected={theme}
+                onChange={(theme) => {
+                  setParams({ theme });
                 }}
               />
             </Box>
             <Flex
               direction="column"
               gap="5px"
+              className="col-span-2"
             >
               <Flex
                 gap="10px"
                 align="center"
               >
-                <Switch name="line-numbers" />
-                <label htmlFor="line-numbers">Line numbers</label>
+                <Checkbox
+                  name="line-numbers"
+                  id="line-numbers"
+                  checked={numbers}
+                  onCheckedChange={(numbers) =>
+                    setParams({
+                      numbers: numbers === true,
+                    })
+                  }
+                />
+                <Text
+                  as="label"
+                  size="2"
+                  htmlFor="line-numbers"
+                >
+                  Line numbers
+                </Text>
               </Flex>
               <Flex
                 gap="10px"
                 align="center"
               >
-                <Switch name="text-wrap" />
-                <label htmlFor="text-wrap">Text wrap</label>
+                <Checkbox
+                  name="text-wrap"
+                  id="text-wrap"
+                  checked={wrap}
+                  onCheckedChange={(wrap) =>
+                    setParams({
+                      wrap: wrap === true,
+                    })
+                  }
+                />
+                <Text
+                  as="label"
+                  size="2"
+                  htmlFor="text-wrap"
+                >
+                  Text wrap
+                </Text>
+              </Flex>
+
+              <Flex
+                gap="10px"
+                align="center"
+              >
+                <Checkbox
+                  name="box-shadow"
+                  id="box-shadow"
+                  checked={shadow}
+                  onCheckedChange={(shadow) =>
+                    setParams({
+                      shadow: shadow === true,
+                    })
+                  }
+                />
+                <Text
+                  as="label"
+                  size="2"
+                  htmlFor="box-shadow"
+                >
+                  Shadow
+                </Text>
+              </Flex>
+              <Flex
+                gap="10px"
+                align="center"
+              >
+                <Checkbox
+                  name="rounded"
+                  id="rounded"
+                  checked={rounded}
+                  onCheckedChange={(rounded) =>
+                    setParams({
+                      rounded: rounded === true,
+                    })
+                  }
+                />
+                <Text
+                  as="label"
+                  size="2"
+                  htmlFor="rounded"
+                >
+                  Rounded Corners
+                </Text>
               </Flex>
             </Flex>
           </Fieldset>
@@ -178,83 +296,12 @@ const Sidebar = ({ editorRef }: SidebarProps) => {
             gap="10px"
           >
             <DownloadImage editorRef={editorRef} />
-            <Button variant="outline">
-              Copy <ClipboardCopyIcon />
-            </Button>
+            <CopyImage editorRef={editorRef} />
           </Flex>
         </Flex>
       </aside>
     </Box>
   );
 };
-
-{
-  /* <Fieldset>
-<Box>
-  <ChooseFont
-    selected={fontFamily}
-    onChange={(fontFamily) => setEditorOptions({ fontFamily })}
-  />
-</Box>
-<Box>
-  <ChooseColorscheme
-    selected={colorscheme}
-    onChange={(colorscheme) => setEditorOptions({ colorscheme })}
-  />
-</Box>
-</Fieldset>
-<Flex
-gap="6"
-align="center"
->
-<TextField.Root
-  type="number"
-  value={fontSize}
-  onChange={(e) =>
-    setEditorOptions({ fontSize: Number(e.target.value) })
-  }
-  className="w-24"
-/>
-<Slider
-  value={[fontSize]}
-  onValueChange={(value) =>
-    setEditorOptions({ fontSize: value[0] })
-  }
-  min={10}
-  max={30}
-  step={0.5}
-  className="max-w-md"
-/>
-</Flex>
-<Box>
-<ChooseFont
-  selected={fontFamily}
-  onChange={(fontFamily) => setEditorOptions({ fontFamily })}
-/>
-</Box>
-<Box>
-<ChooseColorscheme
-  selected={colorscheme}
-  onChange={(colorscheme) => setEditorOptions({ colorscheme })}
-/>
-</Box>
-<Box>
-<ChooseProgrammingLanguage
-  selected={programmingLanguage}
-  onChange={(programmingLanguage) =>
-    setEditorOptions({ programmingLanguage })
-  }
-/>
-</Box>
-<Box>
-<ChooseBackground
-  selected={background}
-  onChange={(background) => setEditorOptions({ background })}
-/>
-</Box>
-<Box>
-<DownloadImage editorRef={editorRef} />
-</Box> */
-}
 
 export { Sidebar };
